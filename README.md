@@ -73,57 +73,65 @@ Key Python libraries:
 
 1.  **Clone the repository:**
     ```sh
-    git clone [https://github.com/](https://github.com/)[YOUR_USERNAME]/LightPeptide-Gen.git
-    cd LightPeptide-Gen
+    git clone https://github.com/quangmytam/Peptide-Design-Lightweight-Model.git
+    cd Peptide-Design-Lightweight-Model
     ```
 
-2.  **Create and activate a Conda environment:**
+2.  **Set up the Conda Environment:**
+    We use a unified Conda environment named `Thesis` for both the backend model and the frontend utilities.
     ```sh
-    conda create -n peptide_gen python=3.8
-    conda activate peptide_gen
+    conda env create -f system/environment.yml
+    conda activate Thesis
     ```
 
-3.  **Install PyTorch:**
-    *(Visit the [official PyTorch website](https://pytorch.org/get-started/locally/) for the correct command for your specific CUDA version)*
+3.  **Install Frontend Dependencies:**
+    Navigate to the frontend directory and install the required Node.js packages (Requires Node.js >= 18).
     ```sh
-    # Example for CUDA 11.7
-    conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia
+    cd frontend
+    npm install
     ```
-
-4.  **Install PyTorch Geometric and RDKit:**
-    ```sh
-    conda install pyg -c pyg
-    conda install -c conda-forge rdkit
-    ```
-
-5.  **Install other dependencies:**
-    ```sh
-    pip install -r requirements.txt
-    ```
-    *(Note: You should create a `requirements.txt` file listing all other dependencies like numpy, tqdm, etc.)*
 
 ## 🏃 Usage
 
-### Training
+To run the complete LightPeptide-Gen system with the graphical user interface, you need to start both the Backend API server and the Frontend Development server.
 
-1.  **Prepare your dataset:**
-    Ensure your training data (e.g., a `.csv` file of peptide SMILES strings) is located in the `data/` directory.
+### 1. Start the Backend API Server
 
-2.  **Configure your model:**
-    Modify the settings in `config/config.yaml` to define model parameters, batch size, learning rate, etc.
+The backend uses FastAPI to serve the `LightweightPeptideGen` model predictions to the frontend.
 
-3.  **Run the training script:**
-    ```sh
-    python train.py --config config/config.yaml
-    ```
-    Checkpoints and logs will be saved to the `experiments/` directory.
+Open a terminal, activate the environment, and start the server:
+```sh
+conda activate Thesis
+cd Model/LightweightPeptideGen
+python api_server.py
+```
+*The API server will start on `http://localhost:8000`.*
 
-### Inference (Generating Peptides)
+### 2. Start the React Frontend
 
-Use a trained model checkpoint to generate new peptides.
+Open a **new** terminal, activate the environment, and start the Vite development server:
+```sh
+conda activate Thesis
+cd Model/Peptide-Lightweight-FE/frontend
+npm run dev
+```
+
+*The frontend application will run on `http://localhost:5173/Peptide-Design-Lightweight-Model/`.*
+
+### 3. Generate Peptides via UI
+1. Open your browser and navigate to the local frontend link provided in the terminal.
+2. Go to the **Generation** tab.
+3. Configure your desired parameters (e.g., peptide length, stability filter).
+4. Click **Generate Peptides** to view the results returned interactively from the AI model!
+
+### Inference (CLI Mode)
+
+If you prefer to generate peptides using the command line instead of the UI:
 
 ```sh
+cd Model/LightweightPeptideGen
 python generate.py \
-    --model_path experiments/[YOUR_RUN_ID]/checkpoints/best_model.pth \
-    --num_to_generate 100 \
-    --output_file results/generated_peptides.csv
+    --checkpoint checkpoints/best_model.pt \
+    --num 100 \
+    --output results/generated_peptides.fasta
+```

@@ -15,7 +15,7 @@
 
 export const generatePeptides = async (params = {}) => {
   try {
-    const response = await fetch('http://localhost:5000/api/generate', {
+    const response = await fetch('http://localhost:8000/api/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,12 +28,12 @@ export const generatePeptides = async (params = {}) => {
     }
 
     const data = await response.json();
-    return data.peptides || data; // Handle both list and object responses
+    return data; // returning the json list parsed directly from FastAPI
   } catch (error) {
     console.error('Failed to fetch generated peptides:', error);
-    // Fallback to mock data on failure (optional, but good for robustness)
+    // Fallback error format matching backend response schema
     return [
-      { sequence: 'ERROR_FETCH', stability: 0.0, validity: 'Failed' }
+      { sequence: 'ERROR_FETCH', stability: 0.0, validity: 'Error', length: 0 }
     ];
   }
 };
