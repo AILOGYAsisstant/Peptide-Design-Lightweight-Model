@@ -1,132 +1,132 @@
-# LightPeptide-Gen: A Lightweight Graph-based Framework for De Novo Peptide Design
+# LightPeptide-Gen: Một Framework gọn nhẹ dựa trên Đồ thị cho Thiết kế Peptide De Novo
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-1.10+-red.svg)](https://pytorch.org/)
 [![PyG](https://img.shields.io/badge/PyTorch%20Geometric-2.0+-orange.svg)](https://pytorch-geometric.readthedocs.io/en/latest/)
 
-A lightweight, efficient framework using Graph Neural Networks (GNNs) and Graph Transformers for the *de novo* generation of novel peptide structures.
+Một framework gọn nhẹ, hiệu quả sử dụng Mạng nơ-ron Đồ thị (GNNs) và Graph Transformers cho việc sinh *de novo* các cấu trúc peptide mới.
 
-## 📖 Table of Contents
+## 📖 Mục lục
 
-* [About The Project](#about-the-project)
-* [Architecture](#architecture)
-* [Key Features](#key-features)
-* [Getting Started](#getting-started)
-    * [Prerequisites](#prerequisites)
-    * [Installation](#installation)
-* [Usage](#usage)
-    * [Training](#training)
-    * [Inference (Generating Peptides)](#inference-generating-peptides)
-* [Roadmap](#roadmap)
-* [License](#license)
-* [Contact](#contact)
-* [Citation](#citation)
+* [Về dự án](#vế-dự-án)
+* [Kiến trúc](#kiến-trúc)
+* [Tính năng chính](#tính-năng-chính)
+* [Bắt đầu](#bắt-đầu)
+    * [Điều kiện tiên quyết](#điều-kiện-tiên-quyết)
+    * [Cài đặt](#cài-đặt)
+* [Sử dụng](#sử-dụng)
+    * [Huấn luyện](#huấn-luyện)
+    * [Suy luận (Sinh Peptide)](#suy-luận-sinh-peptide)
+* [Lộ trình](#lộ-trình)
+* [Giấy phép](#giấy-phép)
+* [Liên hệ](#liên-hệ)
+* [Trích dẫn](#trích-dẫn)
 
-## 🌟 About The Project
+## 🌟 Về dự án
 
-Traditional peptide discovery is a costly and time-consuming process. While deep learning has shown promise in accelerating this, many generative models are computationally heavy, making them difficult to train and deploy.
+Khám phá peptide truyền thống là một quá trình tốn kém và mất thời gian. Trong khi học sâu đã cho thấy triển vọng trong việc tăng tốc quá trình này, nhiều mô hình tạo sinh quá nặng về tính toán, khiến chúng khó huấn luyện và triển khai.
 
-**LightPeptide-Gen** addresses this challenge by providing a framework built on lightweight Graph Neural Networks (GNNs) and optimized Graph Transformers. By representing peptides as molecular graphs, our model learns the underlying chemical and structural rules to generate novel, valid, and diverse peptide candidates efficiently.
+**LightPeptide-Gen** giải quyết thách thức này bằng cách cung cấp một framework được xây dựng trên Mạng nơ-ron Đồ thị (GNNs) gọn nhẹ và Graph Transformers tối ưu. Bằng cách biểu diễn các peptide dưới dạng đồ thị phân tử, mô hình của chúng tôi học các quy tắc hóa học và cấu trúc cơ bản để sinh ra các ứng cử viên peptide mới, hợp lệ và đa dạng một cách hiệu quả.
 
-This project focuses on optimizing the trade-off between **model size**, **inference speed**, and **generation quality**.
+Dự án này tập trung ưu tiên sự cân bằng giữa **kích thước mô hình**, **tốc độ suy luận**, và **chất lượng sinh**.
 
-## 🏗️ Architecture
+## 🏗️ Kiến trúc
 
-The core of our framework is a generative model (e.g., VAE, Autoregressive Model) that operates directly on graph-structured data.
+Cốt lõi của framework là một mô hình tạo sinh (ví dụ: VAE, Autoregressive Model) hoạt động trực tiếp trên dữ liệu cấu trúc đồ thị.
 
-1.  **Input Representation:** Peptides are converted from SMILES or FASTA strings into molecular graphs using `RDKit`. Each atom becomes a node (with features like atom type, charge) and each bond becomes an edge (with features like bond type).
-2.  **Graph Encoder:** A stack of lightweight GNN layers (e.g., GCN, GAT) or an optimized Graph Transformer (e.g., a variant with linear attention) learns a compressed latent representation (embedding) of the molecular graph.
-3.  **Generative Decoder:** A decoder (e.g., Autoregressive or VAE-based) reconstructs or "grows" a new molecular graph from a point sampled in the latent space.
-4.  **Optimization Techniques:** The "lightweight" nature is achieved through:
-    * **Architectural Slimming:** Using fewer layers/hidden dimensions.
-    * **Optimized Blocks:** Replacing standard attention with more efficient variants.
-    * **Knowledge Distillation:** (Optional) Training the small "student" model to mimic a larger "teacher" model.
-    * **Quantization & Pruning:** Applying post-training optimization.
+1.  **Biểu diễn đầu vào:** Peptide được chuyển đổi từ chuỗi SMILES hoặc FASTA thành đồ thị phân tử sử dụng `RDKit`. Mỗi nguyên tử trở thành một nút (với các đặc trưng như loại nguyên tử, điện tích) và mỗi liên kết trở thành một cạnh (với đặc trưng như loại liên kết).
+2.  **Bộ mã hóa Đồ thị (Graph Encoder):** Một ngăn xếp các lớp GNN gọn nhẹ (ví dụ: GCN, GAT) hoặc một Graph Transformer tối ưu (ví dụ: một biến thể với cơ chế chú ý tuyến tính) học một biểu diễn ẩn nén của đồ thị phân tử.
+3.  **Bộ giải mã Tạo sinh (Generative Decoder):** Một bộ giải mã (ví dụ: Autoregressive hoặc dựa trên VAE) tái cấu trúc hoặc "phát triển" một đồ thị phân tử mới từ một điểm được lấy mẫu trong không gian ẩn.
+4.  **Kỹ thuật Tối ưu hóa:** Bản chất "gọn nhẹ" đạt được thông qua:
+    * **Kiến trúc tinh giản:** Sử dụng ít lớp/chiều ẩn hơn.
+    * **Khối tối ưu:** Thay thế cơ chế chú ý (attention) tiêu chuẩn bằng các biến thể hiệu quả hơn.
+    * **Chưng cất tri thức:** (Tùy chọn) Huấn luyện mô hình "student" nhỏ để bắt chước mô hình "teacher" lớn.
+    * **Lượng tử hóa & Cắt tỉa (Quantization & Pruning):** Áp dụng tối ưu hóa sau huấn luyện.
 
-## ✨ Key Features
+## ✨ Tính năng chính
 
-* **Graph-based Generation:** Natively understands molecular structure, leading to higher chemical validity.
-* **Lightweight & Fast:** Designed for low-latency inference and reduced training costs.
-* **Modular:** Easily swap different GNN encoders or generative decoders.
-* **Extensible:** Can be adapted for conditional generation (e.g., "generate peptides with high antibacterial activity").
+* **Tạo sinh Dựa trên Đồ thị:** Hiểu tự nhiên về cấu trúc phân tử, dẫn đến tính hợp lệ hóa học cao hơn.
+* **Gọn nhẹ & Nhanh chóng:** Thiết kế cho độ trễ suy luận thấp và giảm chi phí huấn luyện.
+* **Mô-đun hóa:** Dễ dàng hoán đổi các bộ mã hóa GNN hoặc bộ giải mã tạo sinh khác nhau.
+* **Mở rộng:** Có thể điều chỉnh cho việc tạo sinh có điều kiện (ví dụ: "sinh peptide có hoạt tính kháng khuẩn cao").
 
-## 🚀 Getting Started
+## 🚀 Bắt đầu
 
-Follow these steps to set up the project locally.
+Làm theo các bước sau để cài đặt dự án trên máy của bạn.
 
-### Prerequisites
+### Điều kiện tiên quyết
 
-Ensure you have the following installed:
+Đảm bảo bạn đã cài đặt các phần mềm sau:
 * Python (>= 3.8)
-* Conda (Recommended for managing environments)
+* Conda (Khuyến nghị để quản lý môi trường)
 * PyTorch (>= 1.10)
 
-Key Python libraries:
+Các thư viện Python chính:
 * `torch`
 * `torch-geometric` (PyG)
 * `rdkit-pypi`
 * `numpy`
 * `tqdm`
 
-### Installation
+### Cài đặt
 
-1.  **Clone the repository:**
+1.  **Sao chép kho lưu trữ:**
     ```sh
     git clone https://github.com/quangmytam/Peptide-Design-Lightweight-Model.git
     cd Peptide-Design-Lightweight-Model
     ```
 
-2.  **Set up the Conda Environment:**
-    We use a unified Conda environment named `Thesis` for both the backend model and the frontend utilities.
+2.  **Cài đặt Môi trường Conda:**
+    Chúng tôi sử dụng một môi trường Conda thống nhất có tên `Thesis` cho cả mô hình backend và tiện ích frontend.
     ```sh
     conda env create -f system/environment.yml
     conda activate Thesis
     ```
 
-3.  **Install Frontend Dependencies:**
-    Navigate to the frontend directory and install the required Node.js packages (Requires Node.js >= 18).
+3.  **Cài đặt Dependency của Frontend:**
+    Đi đến thư mục frontend và cài đặt các gói Node.js cần thiết (Yêu cầu Node.js >= 18).
     ```sh
     cd frontend
     npm install
     ```
 
-## 🏃 Usage
+## 🏃 Sử dụng
 
-To run the complete LightPeptide-Gen system with the graphical user interface, you need to start both the Backend API server and the Frontend Development server.
+Để chạy toàn bộ hệ thống LightPeptide-Gen với giao diện người dùng độ họa, bạn cần khởi động cả Backend API server và Frontend Development server.
 
-### 1. Start the Backend API Server
+### 1. Khởi động Backend API Server
 
-The backend uses FastAPI to serve the `LightweightPeptideGen` model predictions to the frontend.
+Backend sử dụng FastAPI để phục vụ mô hình `LightweightPeptideGen` cho giao diện frontend.
 
-Open a terminal, activate the environment, and start the server:
+Mở một terminal, kích hoạt môi trường và khởi động server:
 ```sh
 conda activate Thesis
 cd Model/LightweightPeptideGen
 python api_server.py
 ```
-*The API server will start on `http://localhost:8000`.*
+*API server sẽ khởi chạy tại `http://localhost:8000`.*
 
-### 2. Start the React Frontend
+### 2. Khởi động React Frontend
 
-Open a **new** terminal, activate the environment, and start the Vite development server:
+Mở một terminal **mới**, kích hoạt môi trường và khởi động Vite development server:
 ```sh
 conda activate Thesis
 cd Model/Peptide-Lightweight-FE/frontend
 npm run dev
 ```
 
-*The frontend application will run on `http://localhost:5173/Peptide-Design-Lightweight-Model/`.*
+*Ứng dụng frontend sẽ chạy tại `http://localhost:5173/Peptide-Design-Lightweight-Model/`.*
 
-### 3. Generate Peptides via UI
-1. Open your browser and navigate to the local frontend link provided in the terminal.
-2. Go to the **Generation** tab.
-3. Configure your desired parameters (e.g., peptide length, stability filter).
-4. Click **Generate Peptides** to view the results returned interactively from the AI model!
+### 3. Sinh Peptide qua UI
+1. Mở trình duyệt và truy cập vào liên kết frontend cục bộ được cung cấp trong terminal.
+2. Đi đến tab **Generation** (Sinh mẫu).
+3. Cấu hình các tham số mong muốn (ví dụ: độ dài peptide, bộ lọc tính ổn định).
+4. Nhấn **Generate Peptides** (Sinh Peptide) để xem kết quả trả về tương tác từ mô hình AI!
 
-### Inference (CLI Mode)
+### Suy luận (Chế độ dòng lệnh CLI)
 
-If you prefer to generate peptides using the command line instead of the UI:
+Nếu bạn muốn sinh peptide thông qua dòng lệnh thay vì UI:
 
 ```sh
 cd Model/LightweightPeptideGen

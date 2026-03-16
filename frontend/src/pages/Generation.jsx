@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import TextInput from '../components/TextInput';
 import Button from '../components/Button';
 import PeptideResultCard from '../components/PeptideResultCard';
 import { generatePeptides } from '../api/peptides';
 
 const Generation = () => {
+  const { t } = useTranslation();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPeptides, setGeneratedPeptides] = useState([]);
 
@@ -49,14 +51,14 @@ const Generation = () => {
         {/* Left Column: Control Panel */}
         <aside className="lg:col-span-4 xl:col-span-3 flex flex-col gap-8">
           <div className="flex flex-col gap-2">
-            <h1 className="text-4xl font-black tracking-[-0.033em]">Peptide Generation</h1>
-            <p className="text-base font-normal leading-normal text-subtext-light dark:text-subtext-dark">Configure parameters and generate stable short peptides.</p>
+            <h1 className="text-4xl font-black tracking-[-0.033em]">{t('generation.title')}</h1>
+            <p className="text-base font-normal leading-normal text-subtext-light dark:text-subtext-dark">{t('generation.desc')}</p>
           </div>
           <div className="space-y-6">
-            <h2 className="text-xl font-bold tracking-[-0.015em] border-b border-border-light dark:border-border-dark pb-3">Generation Parameters</h2>
+            <h2 className="text-xl font-bold tracking-[-0.015em] border-b border-border-light dark:border-border-dark pb-3">{t('generation.paramTitle')}</h2>
 
             <TextInput
-              label="Number of Sequences"
+              label={t('generation.numSeq')}
               type="number"
               placeholder="e.g., 6"
               value={numSequences}
@@ -65,14 +67,14 @@ const Generation = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <TextInput
-                label="Min Length"
+                label={t('generation.minLen')}
                 type="number"
                 placeholder="e.g., 10"
                 value={minLength}
                 onChange={(e) => setMinLength(e.target.value)}
               />
               <TextInput
-                label="Max Length"
+                label={t('generation.maxLen')}
                 type="number"
                 placeholder="e.g., 50"
                 value={maxLength}
@@ -81,7 +83,7 @@ const Generation = () => {
             </div>
 
             <TextInput
-              label="Temperature"
+              label={t('generation.temp')}
               type="number"
               step="0.1"
               placeholder="e.g., 1.0"
@@ -90,7 +92,7 @@ const Generation = () => {
             />
 
             <TextInput
-              label="Random Seed (Optional)"
+              label={t('generation.seed')}
               type="number"
               placeholder="e.g., 42"
               value={seed}
@@ -99,7 +101,7 @@ const Generation = () => {
 
             <div className="flex items-center justify-between pt-2">
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium" htmlFor="stability-filter">Enable Stability Filter</label>
+                <label className="text-sm font-medium" htmlFor="stability-filter">{t('generation.filterLabel')}</label>
                 <span className="material-symbols-outlined text-base text-subtext-light dark:text-subtext-dark cursor-help" title="Only return peptides with a predicted stability index below threshold.">help</span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
@@ -117,7 +119,7 @@ const Generation = () => {
             {useFilter && (
               <div className="grid grid-cols-2 gap-4 p-4 rounded-md bg-black/5 dark:bg-white/5">
                 <TextInput
-                  label="II Threshold"
+                  label={t('generation.iiThresh')}
                   type="number"
                   step="0.1"
                   placeholder="e.g., 40.0"
@@ -125,7 +127,7 @@ const Generation = () => {
                   onChange={(e) => setStabilityThreshold(e.target.value)}
                 />
                 <TextInput
-                  label="Oversample (x)"
+                  label={t('generation.os')}
                   type="number"
                   placeholder="e.g., 3"
                   value={oversample}
@@ -137,13 +139,13 @@ const Generation = () => {
             <div className="pt-4 border-t border-border-light dark:border-border-dark">
               <Button onClick={handleGenerate} disabled={isGenerating} className="w-full">
                 <span className="material-symbols-outlined">auto_awesome</span>
-                {isGenerating ? 'Generating...' : 'Generate Peptides'}
+                {isGenerating ? t('generation.btnGenProg') : t('generation.btnGen')}
               </Button>
             </div>
             {isGenerating && (
               <div className="flex flex-col items-center gap-3 p-4 rounded-lg bg-primary/10 dark:bg-primary/20">
                 <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-                <p className="text-sm font-medium text-primary">Generation in progress... (Est. 45s)</p>
+                <p className="text-sm font-medium text-primary">{t('generation.progText')}</p>
               </div>
             )}
           </div>
@@ -151,9 +153,9 @@ const Generation = () => {
         {/* Right Column: Results Area */}
         <section className="lg:col-span-8 xl:col-span-9 flex flex-col gap-6">
           <div className="flex flex-wrap justify-between items-center gap-3">
-            <h2 className="text-2xl font-bold tracking-[-0.015em]">Generated Peptides</h2>
+            <h2 className="text-2xl font-bold tracking-[-0.015em]">{t('generation.resTitle')}</h2>
             <p className="text-sm font-medium text-subtext-light dark:text-subtext-dark">
-              {generatedPeptides.length > 0 ? `Showing ${generatedPeptides.length} results` : ''}
+              {generatedPeptides.length > 0 ? t('generation.showing', { count: generatedPeptides.length }) : ''}
             </p>
           </div>
           <div className="grid grid-cols-1 @container md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -164,8 +166,8 @@ const Generation = () => {
             ) : (
               <div className="lg:col-span-3 flex-1 flex flex-col items-center justify-center text-center p-10 border-2 border-dashed border-border-light dark:border-border-dark rounded-xl">
                 <span className="material-symbols-outlined text-6xl text-subtext-light dark:text-subtext-dark opacity-50">science</span>
-                <h3 className="text-xl font-bold mt-4">No Peptides Generated Yet</h3>
-                <p className="text-subtext-light dark:text-subtext-dark mt-2 max-w-sm">Use the control panel on the left to configure your parameters and start a new generation process. Your results will appear here.</p>
+                <h3 className="text-xl font-bold mt-4">{t('generation.noResTitle')}</h3>
+                <p className="text-subtext-light dark:text-subtext-dark mt-2 max-w-sm">{t('generation.noResDesc')}</p>
               </div>
             )}
           </div>
